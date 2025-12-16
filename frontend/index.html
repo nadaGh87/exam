@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mini Chat</title>
+</head>
+<body>
+
+<input id="author" placeholder="Pseudo">
+<div id="messages"></div>
+<input id="content" placeholder="Message">
+<button onclick="sendMessage()">Send</button>
+
+<script>
+const API_URL = "https://BACKEND-URL.onrender.com/api/messages"
+
+async function loadMessages() {
+  const r = await fetch(API_URL)
+  const d = await r.json()
+  const m = document.getElementById("messages")
+  m.innerHTML = ""
+  d.forEach(x => {
+    m.innerHTML += "<p>" + x.author + " [" + x.time + "] " + x.content + "</p>"
+  })
+}
+
+async function sendMessage() {
+  const a = document.getElementById("author").value
+  const c = document.getElementById("content").value
+  await fetch(API_URL,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({author:a,content:c})
+  })
+  document.getElementById("content").value=""
+  loadMessages()
+}
+
+setInterval(loadMessages,4000)
+</script>
+
+</body>
+</html>
